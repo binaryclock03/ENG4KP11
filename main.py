@@ -1,89 +1,43 @@
-import torch
-import torchvision
-import torchvision.transforms as transforms
+import numpy as np
+import keras
+import tensorflow as tf
+from keras.models import Sequential
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
+from utility import *
 
-transform = transforms.Compose(
-    [transforms.ToTensor(),
-     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+tf.data.experimental.enable_debug_mode()
 
-batch_size = 4
+# Load the data and preprocess it
+# (Assuming your data is stored in a NumPy array called `X` with shape (num_samples, 64, 64, 125) and a NumPy array called `y` with shape (num_samples, 3))
+X, y = load_tiff_data("C:\\Users\\binar\\Documents\\Workshop\\School\\ENG4000\\NewNetwork\\data")
 
-trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
-                                        download=True, transform=transform)
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
-                                          shuffle=True, num_workers=0)
+X, y = augment_data(X, y)
 
-testset = torchvision.datasets.CIFAR10(root='./data', train=False,
-                                       download=True, transform=transform)
-testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size,
-                                         shuffle=False, num_workers=0)
+X_test, y_test, X, y = extract_and_return_remaining_data(X, y, 100)
 
-classes = ('plane', 'car', 'bird', 'cat',
-           'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+X = X.astype('float32') / 255
 
-import torch.nn as nn
-import torch.nn.functional as F
-from net import Net
+# Define the model
+model = Sequential()
+model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(64, 64, 125)))
+model.add(MaxPooling2D((2, 2)))
+model.add(Conv2D(64, (3, 3), activation='relu'))
+model.add(MaxPooling2D((2, 2)))
+model.add(Flatten())
+model.add(Dense(64, activation='relu'))
+model.add(Dense(3, activation='softmax'))
 
-net = Net()
+# Compile the model
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'], run_eagerly=True)
 
-import torch.optim as optim
+# Train the model
+model.fit(X, y, batch_size=32, epochs=5)
 
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
-
-for epoch in range(2):  # loop over the dataset multiple times
-
-    running_loss = 0.0
-    for i, data in enumerate(trainloader, 0):
-        # get the inputs; data is a list of [inputs, labels]
-        inputs, labels = data
-
-        # zero the parameter gradients
-        optimizer.zero_grad()
-
-        # forward + backward + optimize
-        outputs = net(inputs)
-        loss = criterion(outputs, labels)
-        loss.backward()
-        optimizer.step()
-
-        # print statistics
-        running_loss += loss.item()
-        if i % 2000 == 1999:    # print every 2000 mini-batches
-            print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}')
-            running_loss = 0.0
-
-print('Finished Training')
-
-PATH = './cifar_net.pth'
-torch.save(net.state_dict(), PATH)
-
-## testing the network
-dataiter = iter(testloader)
-images, labels = dataiter.next()
-
-net = Net()
-net.load_state_dict(torch.load(PATH))
-
-outputs = net(images)
-
-_, predicted = torch.max(outputs, 1)
-
-print('Predicted: ', ' '.join(f'{classes[predicted[j]]:5s}'
-                              for j in range(4)))
-
-correct = 0
-total = 0
-# since we're not training, we don't need to calculate the gradients for our outputs
-with torch.no_grad():
-    for data in testloader:
-        images, labels = data
-        # calculate outputs by running images through the network
-        outputs = net(images)
-        # the class with the highest energy is what we choose as prediction
-        _, predicted = torch.max(outputs.data, 1)
-        total += labels.size(0)
-        correct += (predicted == labels).sum().item()
-
-print(f'Accuracy of the network on the 10000 test images: {100 * correct // total} %')
+# Evaluate the model on the test data
+test_loss, test_accuracy = model.evaluate(X_test, y_test, batch_size=32)
+print("-----------------------------")
+print('Training dataset size:', len(X))
+print('Test dataset size:', len(X_test))
+print("-----------------------------")
+print('Test loss:', test_loss)
+print('Test accuracy:', test_accuracy)
