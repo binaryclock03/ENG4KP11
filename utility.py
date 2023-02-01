@@ -1,10 +1,6 @@
 import os
 import numpy as np
-import skimage.io
-
-import os
 import imageio
-import numpy as np
 
 ## Loading Data
 def load_tiff_data(dir_path):
