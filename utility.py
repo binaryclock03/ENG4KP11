@@ -60,8 +60,8 @@ def augment_data_by_rotating(data, truth):
 
 ## User interaction Functions
 def ask_to_save_model(model):
-    save = input("Do you want to save the model? (yes/no)")
-    if save.lower() == 'yes':
+    save = input("Do you want to save the model? [y/n]")
+    if save.lower() == 'y':
         date_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         model.save("saved_models//trained_model_" + date_time + ".h5")
         print("Model saved as 'trained_model_" + date_time + ".h5'")
