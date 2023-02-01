@@ -1,34 +1,25 @@
-import numpy as np
-import keras
-import tensorflow as tf
-from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
 from utility import *
-
-tf.data.experimental.enable_debug_mode()
+from model import *
 
 # Load the data and preprocess it
 # (Assuming your data is stored in a NumPy array called `X` with shape (num_samples, 64, 64, 125) and a NumPy array called `y` with shape (num_samples, 3))
 X, y = load_tiff_data("C:\\Users\\binar\\Documents\\Workshop\\School\\ENG4000\\NewNetwork\\data")
 
+# augments data throught the utility function
 X, y = augment_data(X, y)
 
-X_test, y_test, X, y = extract_and_return_remaining_data(X, y, 100)
-
+# Scales data to 0-1 for network input
 X = X.astype('float32') / 255
 
+# Splits n number of images off from the dataset to be used as test data after training
+n = 100
+X_test, y_test, X, y = extract_and_return_remaining_data(X, y, n)
+
 # Define the model
-model = Sequential()
-model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(64, 64, 125)))
-model.add(MaxPooling2D((2, 2)))
-model.add(Conv2D(64, (3, 3), activation='relu'))
-model.add(MaxPooling2D((2, 2)))
-model.add(Flatten())
-model.add(Dense(64, activation='relu'))
-model.add(Dense(3, activation='softmax'))
+model = define_model()
 
 # Compile the model
-model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'], run_eagerly=True)
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 # Train the model
 model.fit(X, y, batch_size=32, epochs=5)
