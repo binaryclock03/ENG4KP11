@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import imageio
+import datetime
 
 ## Loading Data
 def load_tiff_data(dir_path):
@@ -61,7 +62,8 @@ def augment_data_by_rotating(data, truth):
 def ask_to_save_model(model):
     save = input("Do you want to save the model? (yes/no)")
     if save.lower() == 'yes':
-        model.save("trained_model.h5")
-        print("Model saved as 'trained_model.h5'")
+        date_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        model.save("saved_models//trained_model_" + date_time + ".h5")
+        print("Model saved as 'trained_model_" + date_time + ".h5'")
     else:
         print("Model not saved")
