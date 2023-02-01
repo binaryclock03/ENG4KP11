@@ -6,6 +6,7 @@ import os
 import imageio
 import numpy as np
 
+## Loading Data
 def load_tiff_data(dir_path):
     filenames = [f for f in os.listdir(dir_path) if f.endswith(".tif")]
     num_samples = len(filenames)
@@ -35,6 +36,14 @@ def extract_and_return_remaining_data(data, truth, num_samples):
     remaining_truth = np.delete(truth, indices, axis=0)
     return extracted_data, extracted_truth, remaining_data, remaining_truth
 
+def randomize_data(data, truth):
+    num_samples = data.shape[0]
+    permutation = np.random.permutation(num_samples)
+    randomized_data = data[permutation]
+    randomized_truth = truth[permutation]
+    return randomized_data, randomized_truth
+
+## Augmentation Functions
 def augment_data(data, truth):
     data, truth = augment_data_by_flipping_vertically(data, truth)
     data, truth = augment_data_by_rotating(data, truth)
@@ -51,3 +60,12 @@ def augment_data_by_rotating(data, truth):
     augmented_data = np.concatenate((data, rotated_data), axis=0)
     augmented_truth = np.concatenate((truth, truth), axis=0)
     return augmented_data, augmented_truth
+
+## User interaction Functions
+def ask_to_save_model(model):
+    save = input("Do you want to save the model? (yes/no)")
+    if save.lower() == 'yes':
+        model.save("trained_model.h5")
+        print("Model saved as 'trained_model.h5'")
+    else:
+        print("Model not saved")
