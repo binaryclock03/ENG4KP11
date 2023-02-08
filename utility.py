@@ -113,20 +113,25 @@ def plot_prediction_grid(truths, predictions):
     truth_grid = np.reshape(truths, (int(np.sqrt(truths.shape[0])), -1))
     prediction_grid = np.reshape(predictions, (int(np.sqrt(predictions.shape[0])), -1))
     cmap = ListedColormap(["lawngreen", "red", "grey"])
-    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(10,5))
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(6,6))
     ax1.imshow(truth_grid, cmap= cmap)
     ax1.set_title('Truth')
     ax2.imshow(prediction_grid, cmap= cmap)
     ax2.set_title('Prediction')
 
     cmap = ListedColormap(["red", "lawngreen"])
-    right_wrong = elementwise_comparison(truths, predictions)
+    right_wrong = array_and(truths, predictions)
     right_wrong_grid = np.reshape(right_wrong, (int(np.sqrt(truths.shape[0])), -1))
     ax3.imshow(right_wrong_grid, cmap= cmap)
     ax3.set_title('Right Wrong')
 
+    cmap = ListedColormap(["lawngreen", "lawngreen", "blue", "red", "grey"])
+    confusion = array_compare(truths, predictions)
+    confusion_grid = np.reshape(confusion, (int(np.sqrt(truths.shape[0])), -1))
+    ax4.imshow(confusion_grid, cmap= cmap)
+    ax4.set_title('Confusion')
 
-
+    plt.tight_layout()
     plt.show()
 
 def predict_class(model, data):
@@ -141,11 +146,28 @@ def convert_truths_to_integer(truths_array):
         integer_truths[i] = np.argmax(truths_array[i])
     return integer_truths
 
-def elementwise_comparison(array1, array2):
+#elementwise and
+def array_and(array1, array2):
     result = []
     for i in range(len(array1)):
         if array1[i] == array2[i]:
             result.append(1)
         else:
             result.append(0)
+    return result
+
+
+def array_compare(array1, array2):
+    result = []
+    for i in range(len(array1)):
+        if array1[i] == 0 and array2[i] == 0:
+            result.append(0)
+        elif array1[i] == 1 and array2[i] == 1:
+            result.append(1)
+        elif array1[i] == 0 and array2[i] == 1:
+            result.append(2)
+        elif array1[i] == 1 and array2[i] == 0:
+            result.append(3)
+        else:
+            result.append(4)
     return result
