@@ -63,11 +63,9 @@ def run_model():
     # Splits n number of images off from the dataset to be used as test data after training
     n = 20**2
     data_test, truths_test, _, _ = util.extract_and_return_remaining_data(data, truths, n)
-    
-    print(data_test.shape)
 
     predicted_truths = util.predict_class(model, data_test)
 
     truths_test = util.convert_truths_to_integer(truths_test)
 
-    util.plot_prediction_grid(truths_test, predicted_truths)
+    util.plot_outputs(truths_test, predicted_truths)

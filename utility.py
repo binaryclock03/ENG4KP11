@@ -106,30 +106,50 @@ def ask_to_save_model(model):
     else:
         print("Model not saved")
 
-def plot_prediction_grid(truths, predictions):
+def plot_outputs(truths, predictions):
     truths = truths.astype(int)
     predictions = predictions.astype(int)
 
     truth_grid = np.reshape(truths, (int(np.sqrt(truths.shape[0])), -1))
     prediction_grid = np.reshape(predictions, (int(np.sqrt(predictions.shape[0])), -1))
     cmap = ListedColormap(["lawngreen", "red", "grey"])
-    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(6,6))
+    fig, ((ax1, ax2, ax5), (ax3, ax4, ax6)) = plt.subplots(2, 3, figsize=(9,6))
     ax1.imshow(truth_grid, cmap= cmap)
     ax1.set_title('Truth')
+    ax1.axis('off')
     ax2.imshow(prediction_grid, cmap= cmap)
     ax2.set_title('Prediction')
+    ax2.axis('off')
 
     cmap = ListedColormap(["red", "lawngreen"])
     right_wrong = array_and(truths, predictions)
     right_wrong_grid = np.reshape(right_wrong, (int(np.sqrt(truths.shape[0])), -1))
     ax3.imshow(right_wrong_grid, cmap= cmap)
     ax3.set_title('Right Wrong')
+    ax3.axis('off')
 
-    cmap = ListedColormap(["lawngreen", "lawngreen", "blue", "red", "grey"])
+    cmap = ListedColormap(["lawngreen", "blue", "grey", "red", "lawngreen", "red", "grey", "grey", "lawngreen"])
     confusion = array_compare(truths, predictions)
     confusion_grid = np.reshape(confusion, (int(np.sqrt(truths.shape[0])), -1))
     ax4.imshow(confusion_grid, cmap= cmap)
-    ax4.set_title('Confusion')
+    ax4.set_title('Green: correct, B: false pos,\n R: false neg, Grey: Other')
+    ax4.axis('off')
+
+    confusion_matrix = count_occurrences(confusion).astype(int)
+    ax5.axis('tight')
+    ax5.axis('off')
+    ax5.table(cellText=confusion_matrix,
+              colLabels=['TrHealthy', 'TrRust', 'TrOther'],
+              rowLabels=['PrHealthy', 'PrRust', 'PrOther'],
+              cellLoc='center', loc='center')
+    
+    proc_user = proc_user_rates(confusion_matrix).astype(int)
+    ax6.axis('tight')
+    ax6.axis('off')
+    ax6.table(cellText=proc_user,
+              colLabels=['Healthy', 'Rust', 'Other'],
+              rowLabels=['User %', 'Prod %'],
+              cellLoc='center', loc='center')
 
     plt.tight_layout()
     plt.show()
@@ -156,18 +176,78 @@ def array_and(array1, array2):
             result.append(0)
     return result
 
-
+#compares arrays and seperates different states into ints
 def array_compare(array1, array2):
     result = []
     for i in range(len(array1)):
+        #(was healthy, predicted healthy)
         if array1[i] == 0 and array2[i] == 0:
             result.append(0)
-        elif array1[i] == 1 and array2[i] == 1:
-            result.append(1)
+        #(was healthy, predicted unhealthy)
         elif array1[i] == 0 and array2[i] == 1:
-            result.append(2)
+            result.append(1) 
+        #(was healthy, predicted other)
+        elif array1[i] == 0 and array2[i] == 2:
+            result.append(2) 
+        
+        #(was unhealthy, predicted healthy)
         elif array1[i] == 1 and array2[i] == 0:
-            result.append(3)
+            result.append(3) 
+        #(was unhealthy, predicted unhealthy)
+        elif array1[i] == 1 and array2[i] == 1:
+            result.append(4) 
+        #(was unhealthy, predicted other)
+        elif array1[i] == 1 and array2[i] == 2:
+            result.append(5) 
+
+        #(was other, predicted healthy)
+        elif array1[i] == 2 and array2[i] == 0:
+            result.append(6) 
+        #(was other, predicted unhealthy)
+        elif array1[i] == 2 and array2[i] == 1:
+            result.append(7) 
+        #(was other, predicted other)
+        elif array1[i] == 2 and array2[i] == 2:
+            result.append(8) 
+        
         else:
-            result.append(4)
+            result.append(9)
     return result
+
+def count_occurrences(arr):
+    count = np.zeros((3,3))
+    for i in range(len(arr)):
+        if arr[i] == 0:
+            count[0,0] += 1
+        elif arr[i] == 1:
+            count[0,1] += 1
+        elif arr[i] == 2:
+            count[0,2] += 1
+        elif arr[i] == 3:
+            count[1,0] += 1
+        elif arr[i] == 4:
+            count[1,1] += 1
+        elif arr[i] == 5:
+            count[1,2] += 1
+        elif arr[i] == 6:
+            count[2,0] += 1
+        elif arr[i] == 7:
+            count[2,1] += 1
+        elif arr[i] == 8:
+            count[2,2] += 1
+    return np.transpose(count)
+
+def proc_user_rates(confusion_matrix):
+    output = np.zeros((2,3))
+
+    output[0,0] = confusion_matrix[0,0] / (confusion_matrix[0,0] + confusion_matrix[0, 1] + confusion_matrix[0, 2])
+    output[0,1] = confusion_matrix[1,1] / (confusion_matrix[1,0] + confusion_matrix[1, 1] + confusion_matrix[1, 2])
+    output[0,2] = confusion_matrix[2,2] / (confusion_matrix[2,0] + confusion_matrix[2, 1] + confusion_matrix[2, 2])
+
+    output[1,0] = confusion_matrix[0,0] / (confusion_matrix[0,0] + confusion_matrix[1, 0] + confusion_matrix[2, 0])
+    output[1,1] = confusion_matrix[1,1] / (confusion_matrix[0,1] + confusion_matrix[1, 1] + confusion_matrix[2, 1])
+    output[1,2] = confusion_matrix[2,2] / (confusion_matrix[0,2] + confusion_matrix[1, 2] + confusion_matrix[2, 2])
+
+    output *= 100
+    output = output.astype(int)
+    return output
