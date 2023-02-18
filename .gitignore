@@ -1,6 +1,8 @@
 # Ignore data folder
 data/
 saved_models/
+build/.buildozer
+build/bin
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -12,7 +14,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
@@ -36,6 +37,7 @@ MANIFEST
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
+!buildozer.spec
 
 # Installer logs
 pip-log.txt
