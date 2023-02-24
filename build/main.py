@@ -7,6 +7,18 @@ from kivy.uix.image import Image
 from kivy.uix.button import Button
 from kivy.uix.filechooser import FileChooserListView
 from kivy.properties import StringProperty
+from kivy.uix.label import Label
+
+import functions.model_definition as modeldef
+import functions.network_functions as fnf
+
+
+def get_files_by_extension(file_paths, extension):
+    filtered_files = []
+    for file_path in file_paths:
+        if file_path.endswith(extension):
+            filtered_files.append(file_path)
+    return filtered_files
 
 class MainScreen(BoxLayout):
 
@@ -31,6 +43,10 @@ class MainScreen(BoxLayout):
         # create image widget to display generated image
         self.image_widget = Image()
         self.add_widget(self.image_widget)
+        
+        # create label widget
+        self.label_widget = Label()
+        self.add_widget(self.label_widget)
 
     def on_file_selection(self, file_chooser, selection):
         if selection:
@@ -38,9 +54,15 @@ class MainScreen(BoxLayout):
 
     def generate_image(self, instance):
         if self.image_path:
-            # fake function that generates image from file path
-            # replace this with your own image generation function
-            self.image_widget.source = 'fake_image.png'
+            if self.image_path.endswith('.tif'):
+                # fake function that generates image from file path
+                # replace this with your own image generation function
+                
+                model = "saved_models\\trained_model_2023-02-11_13-12-27.h5"
+                
+                
+                self.image_widget.source = 'fake_image.png'
+                self.label_widget.text = fnf.predict_class(model, self.image_path)
 
 class MyApp(App):
 
