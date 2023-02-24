@@ -22,7 +22,6 @@ MDScreen:
 
 '''
 
-
 class Test(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -46,7 +45,7 @@ class Test(MDApp):
         if text_item == 'Select Files':
             print('3')
         elif text_item == 'Help':
-            popup = Popup(title='Test popup', content=Label(text='Click on Select Files and the program will automatically output the accuracy of your TIFF files.'), size_hint=(None, None), size=(200, 400))
+            popup = Popup(title='Test popup', content=Label(text_size=(180, None),text='Click on Select Files and the program will automatically output the accuracy of your TIFF files.'), size_hint=(None, None), size=(200, 400))
             popup.open()
         elif text_item == 'Exit':
             MDApp.get_running_app().stop()
