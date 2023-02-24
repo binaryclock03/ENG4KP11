@@ -6,9 +6,9 @@ from kivy.core.window import Window
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 
-import network_main as nm
-import model as modeldef
-import utility as util
+from network_lib import network_main as nm
+from network_lib.functions import model_definition as modeldef
+
 
 Window.size=(340,610)
 KV = '''

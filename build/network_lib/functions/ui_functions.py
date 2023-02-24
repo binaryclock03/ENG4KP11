@@ -1,7 +1,7 @@
 import datetime
 import matplotlib.pyplot as plt
 import numpy as np
-import functions.math_functions as lmf
+import network_lib.functions.math_functions as lmf
 from matplotlib.colors import ListedColormap
 
 ## User interaction Functions

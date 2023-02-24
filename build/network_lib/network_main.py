@@ -1,7 +1,7 @@
-import functions.network_functions as fnf
-from functions.math_functions import convert_truths_to_integer
-import functions.model_definition as modeldef
-import functions.ui_functions as fui
+from network_lib.functions import network_functions as fnf
+from network_lib.functions.math_functions import convert_truths_to_integer
+from network_lib.functions import model_definition as modeldef
+from network_lib.functions import ui_functions as fui
 
 def train_network(data_path):
     # Load the data and preprocess it
