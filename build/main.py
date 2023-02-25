@@ -9,8 +9,8 @@ from kivy.uix.filechooser import FileChooserListView
 from kivy.properties import StringProperty
 from kivy.uix.label import Label
 
-import functions.model_definition as modeldef
-import functions.network_functions as fnf
+import network_lib.functions.model_definition as modeldef
+import network_lib.functions.network_functions as fnf
 
 
 def get_files_by_extension(file_paths, extension):
@@ -57,12 +57,16 @@ class MainScreen(BoxLayout):
             if self.image_path.endswith('.tif'):
                 # fake function that generates image from file path
                 # replace this with your own image generation function
-                
+                generated_image = self.generate_image_from_path(self.image_path)
+                self.image_widget.texture = generated_image.texture
                 model = "saved_models\\trained_model_2023-02-11_13-12-27.h5"
-                
-                
-                self.image_widget.source = 'fake_image.png'
                 self.label_widget.text = fnf.predict_class(model, self.image_path)
+            elif self.image_path.endswith('.png'):
+                generated_image = Image(source=f'{self.image_path}')
+                self.image_widget.texture = generated_image.texture
+                self.label_widget.text = 'Invalid file format'
+        else:
+            self.label_widget.text = 'No file selected'
 
 class MyApp(App):
 
