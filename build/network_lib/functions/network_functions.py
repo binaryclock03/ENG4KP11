@@ -26,10 +26,12 @@ def load_tiff_data(dir_path):
     return data, truth
 
 def load_single_tiff(file_path):
+    data = np.zeros((1, 64, 64, 125))
     image = imageio.imread(file_path)
     if image.shape[-1] == 126:
         image = image[..., :125]
-    return image
+    data[:, :, :, :] = image
+    return data
 
 def extract_and_return_remaining_data(data, truth, num_samples):
     indices = np.random.choice(data.shape[0], num_samples, replace=False)

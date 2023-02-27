@@ -13,6 +13,8 @@ import network_lib.functions.model_definition as modeldef
 import network_lib.functions.network_functions as fnf
 
 
+
+
 def get_files_by_extension(file_paths, extension):
     filtered_files = []
     for file_path in file_paths:
@@ -30,7 +32,7 @@ class MainScreen(BoxLayout):
         self.orientation = 'vertical'
 
         # create file chooser widget
-        self.file_chooser = FileChooserListView(path='/data/data/org.test.myapp/files')
+        self.file_chooser = FileChooserListView(path='C:/Users/Aditya Arora/Python/venv/ENG4k_Python_GUI/val')#change to relative android path for apk
         self.file_chooser.bind(selection=self.on_file_selection)
 
         # create button widget to generate fake image
@@ -57,10 +59,11 @@ class MainScreen(BoxLayout):
             if self.image_path.endswith('.tif'):
                 # fake function that generates image from file path
                 # replace this with your own image generation function
-                generated_image = self.generate_image_from_path(self.image_path)
-                self.image_widget.texture = generated_image.texture
-                model = "saved_models\\trained_model_2023-02-11_13-12-27.h5"
-                self.label_widget.text = fnf.predict_class(model, self.image_path)
+                image = fnf.load_single_tiff(self.image_path)
+                model = fnf.load_model("C:/Users/Aditya Arora/Python/venv/ENG4KP11/build/saved_models/trained_model_2023-02-11_13-12-27.h5")#change to relative android path for apk
+                print(fnf.predict_class(model, image)[0])
+                self.label_widget.text = str(fnf.predict_class(model, image)[0])
+                
             elif self.image_path.endswith('.png'):
                 generated_image = Image(source=f'{self.image_path}')
                 self.image_widget.texture = generated_image.texture
