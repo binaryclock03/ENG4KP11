@@ -57,17 +57,15 @@ class MainScreen(BoxLayout):
     def generate_image(self, instance):
         if self.image_path:
             if self.image_path.endswith('.tif'):
-                # fake function that generates image from file path
-                # replace this with your own image generation function
                 image = fnf.load_single_tiff(self.image_path)
-                model = fnf.load_model("C:/Users/Aditya Arora/Python/venv/ENG4KP11/build/saved_models/trained_model_2023-02-11_13-12-27.h5")#change to relative android path for apk
+                model = fnf.load_model("C:/Users/Aditya Arora/Python/venv/ENG4KP11/build")#change to relative android path for apk
+                #C:/Users/Aditya Arora/Python/venv/ENG4KP11/build/saved_models/trained_model_2023-02-11_13-12-27.h5
                 print(fnf.predict_class(model, image)[0])
                 self.label_widget.text = str(fnf.predict_class(model, image)[0])
-                
             elif self.image_path.endswith('.png'):
                 generated_image = Image(source=f'{self.image_path}')
                 self.image_widget.texture = generated_image.texture
-                self.label_widget.text = 'Invalid file format'
+                self.label_widget.text = 'This is not the proper input for the Neural Network'
         else:
             self.label_widget.text = 'No file selected'
 
