@@ -6,9 +6,11 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.image import Image
 from kivy.uix.label import Label
+from kivy.uix.colorpicker import Color
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.uix.filechooser import FileChooserListView
 from kivy.properties import StringProperty
+from kivy.graphics import Rectangle
 
 import network_lib.functions.model_definition as modeldef
 import network_lib.functions.network_functions as fnf
@@ -17,34 +19,44 @@ import network_lib.functions.network_functions as fnf
 class MainMenu(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        # Set the background color to white
+        with self.canvas:
+            Color(0.212, 0.208, 0.216)
+            self.rect = Rectangle(size=self.size, pos=self.pos)
+        
+        # Bind the function to update the background color when the size or position changes
+        self.bind(size=self._update_rect, pos=self._update_rect)
         
         # Create a box layout for the main menu
         layout = BoxLayout(orientation='vertical', spacing=20, padding=50)
         
         # Add the logo to the layout
-        logo = Image(source='logo.png')
+        logo = Image(source='logo.png',size_hint=(0.35, 0.35), pos_hint={'center_x': 0.5, 'center_y': 0.5})
         layout.add_widget(logo)
         
         # Add buttons for each option
-        file_viewer_button = Button(text='Open File Viewer', font_size=18, size_hint=(0.4, 0.05), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        file_viewer_button = Button(text='Open File Viewer', font_size=18, size_hint=(0.4, 0.15), pos_hint={'center_x': 0.5, 'center_y': 0.5})
         file_viewer_button.bind(on_press=self.open_file_viewer)
-        file_viewer_button.background_normal = 'button_normal.png'
-        file_viewer_button.background_down = 'button_down.png'
-        file_viewer_button.background_color = (0.8, 0.2, 0.2, 1)
+        file_viewer_button.background_normal = 'button_1.png'
+        file_viewer_button.background_down = 'button_1_down.png'
+        file_viewer_button.background_color = (0.996, 0.98, 0.863)
+        file_viewer_button.color = (0, 0, 0)
         layout.add_widget(file_viewer_button)
         
-        app_settings_button = Button(text='App Settings', font_size=18, size_hint=(0.4, 0.05), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        app_settings_button = Button(text='App Settings', font_size=18, size_hint=(0.4, 0.15), pos_hint={'center_x': 0.5, 'center_y': 0.5})
         app_settings_button.bind(on_press=self.open_app_settings)
-        app_settings_button.background_normal = 'button_normal.png'
-        app_settings_button.background_down = 'button_down.png'
-        app_settings_button.background_color = (0.2, 0.8, 0.2, 1)
+        app_settings_button.background_normal = 'button_1.png'
+        app_settings_button.background_down = 'button_1_down.png'
+        app_settings_button.background_color = (0.996, 0.98, 0.863)
+        app_settings_button.color = (0, 0, 0)
         layout.add_widget(app_settings_button)
         
-        about_button = Button(text='About the App', font_size=18, size_hint=(0.4, 0.05), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        about_button = Button(text='About the App', font_size=18, size_hint=(0.4, 0.15), pos_hint={'center_x': 0.5, 'center_y': 0.5})
         about_button.bind(on_press=self.open_about)
-        about_button.background_normal = 'button_normal.png'
-        about_button.background_down = 'button_down.png'
-        about_button.background_color = (0.2, 0.2, 0.8, 1)
+        about_button.background_normal = 'button_1.png'
+        about_button.background_down = 'button_1_down.png'
+        about_button.background_color = (0.996, 0.98, 0.863)
+        about_button.color = (0, 0, 0)
         layout.add_widget(about_button)
         
         # Set the main menu screen to use the box layout
@@ -58,6 +70,11 @@ class MainMenu(Screen):
     
     def open_about(self, instance):
         self.manager.current = 'about'
+       
+    def _update_rect(self, instance, value):
+        # Update the background color to fill the entire screen
+        self.rect.pos = instance.pos
+        self.rect.size = instance.size
 
 class FileViewer(Screen):
     def __init__(self, **kwargs):
