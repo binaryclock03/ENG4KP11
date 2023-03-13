@@ -32,7 +32,7 @@ class MainScreen(BoxLayout):
         self.orientation = 'vertical'
 
         # create file chooser widget
-        self.file_chooser = FileChooserListView(path="C:/Users/Aditya Arora/Python/venv/ENG4KP11/build")#change to relative android path for apk
+        self.file_chooser = FileChooserListView(path="C:/Users/Aditya Arora/Python/venv/ENG4k_Python_GUI/val")#change to relative android path for apk C:/Users/Aditya Arora/Python/venv/ENG4KP11/build
         self.file_chooser.bind(selection=self.on_file_selection)
 
         # create button widget to generate fake image
