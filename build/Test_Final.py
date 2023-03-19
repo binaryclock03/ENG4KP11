@@ -163,6 +163,9 @@ class AppSettings(Screen):
         back_button = Button(text='Back')
         back_button.bind(on_press=self.back_app_settings)
         layout.add_widget(back_button)
+        
+        # Set the file viewer screen to use the box layout
+        self.add_widget(layout)
     def back_app_settings(self, instance):
         # This method will be called when the "Back" button is pressed
         # You can replace this with your own code to close the file viewer screen
