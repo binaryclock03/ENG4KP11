@@ -14,6 +14,7 @@ from kivy.graphics import Rectangle
 
 import network_lib.functions.model_definition as modeldef
 import network_lib.functions.network_functions as fnf
+from kivy.uix.popup import Popup
 
 
 class MainMenu(Screen):
@@ -141,12 +142,29 @@ class About(Screen):
         back_button.bind(on_press=self.back_about_viewer)
         layout.add_widget(back_button)
         
+        show_popup(self, layout)
+        
         # Set the file viewer screen to use the box layout
         self.add_widget(layout)
     def back_about_viewer(self, instance):
         # This method will be called when the "Back" button is pressed
         # You can replace this with your own code to close the file viewer screen
         self.manager.current = 'menu'
+
+    
+def show_popup(self, content):
+    popup = Popup(title='Upgrade to Premium', content=BoxLayout(orientation='vertical'), size_hint=(None, None), size=(400, 200),
+                      pos_hint={'center_x': 0.5, 'top': 1})
+    popup.content.add_widget(Label(text='Upgrade to Premium to unlock more features!'))
+    
+    upgrade_button = Button(text='Upgrade', size_hint_y=None, height=40)
+    #upgrade_button.bind()
+    popup.content.add_widget(upgrade_button)
+    
+    dismiss_button = Button(text='Dismiss', size_hint_y=None, height=40)
+    dismiss_button.bind(on_press=popup.dismiss)
+    popup.content.add_widget(dismiss_button)
+    popup.open()
         
 class AppSettings(Screen):
     def __init__(self, **kwargs):
