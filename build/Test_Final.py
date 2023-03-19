@@ -82,7 +82,7 @@ class FileViewer(Screen):
         layout = BoxLayout(orientation='vertical')
 
         # create file chooser widget
-        self.file_chooser = FileChooserListView(path="C:/Users/Aditya Arora/Python/venv/ENG4k_Python_GUI/val")#change to relative android path for apk C:/Users/Aditya Arora/Python/venv/ENG4KP11/build
+        self.file_chooser = FileChooserListView(path="C:/Users/Kevin H/Downloads/ENG4k Python GUI/data/val")#change to relative android path for apk C:/Users/Aditya Arora/Python/venv/ENG4KP11/build
         self.file_chooser.bind(selection=self.on_file_selection)
 
         # create button widget to generate fake image
@@ -109,7 +109,7 @@ class FileViewer(Screen):
         if self.image_path:
             if self.image_path.endswith('.tif'):
                 image = fnf.load_single_tiff(self.image_path)
-                model = fnf.load_model("C:/Users/Aditya Arora/Python/venv/ENG4KP11/build/saved_models/trained_model_2023-02-11_13-12-27.h5")#change to relative android path for apk
+                model = fnf.load_model("C:/Users/Kevin H/Downloads/ENG4k Python GUI/saved_models/trained_model_2023-02-08_22-03-42.h5")#change to relative android path for apk
                 print(fnf.predict_class(model, image)[0])
                 self.label_widget.text = str(fnf.predict_class(model, image)[0])
             elif self.image_path.endswith('.png'):
@@ -122,6 +122,7 @@ class FileViewer(Screen):
     def close_file_viewer(self, instance):
         # This method will be called when the "Close" button is pressed
         # You can replace this with your own code to close the file viewer screen
+        self.manager.current = 'menu'
         print('Closing File Viewer...')
 
 class About(Screen):
@@ -136,16 +137,16 @@ class About(Screen):
         layout.add_widget(filename_label)
         
         # Add a button to close the file viewer screen
-        close_button = Button(text='Close')
-        close_button.bind(on_press=self.close_about_viewer)
-        layout.add_widget(close_button)
+        back_button = Button(text='Back')
+        back_button.bind(on_press=self.back_about_viewer)
+        layout.add_widget(back_button)
         
         # Set the file viewer screen to use the box layout
         self.add_widget(layout)
-    def close_about_viewer(self, instance):
-        # This method will be called when the "Close" button is pressed
+    def back_about_viewer(self, instance):
+        # This method will be called when the "Back" button is pressed
         # You can replace this with your own code to close the file viewer screen
-        print('Closing File Viewer...')
+        self.manager.current = 'menu'
         
 class AppSettings(Screen):
     def __init__(self, **kwargs):
@@ -159,13 +160,13 @@ class AppSettings(Screen):
         layout.add_widget(settings_label)
         
         # Add a button to close the app settings screen
-        close_button = Button(text='Close')
-        close_button.bind(on_press=self.close_app_settings)
-        layout.add_widget(close_button)
-    def close_app_settings(self, instance):
-        # This method will be called when the "Close" button is pressed
+        back_button = Button(text='Back')
+        back_button.bind(on_press=self.back_app_settings)
+        layout.add_widget(back_button)
+    def back_app_settings(self, instance):
+        # This method will be called when the "Back" button is pressed
         # You can replace this with your own code to close the file viewer screen
-        print('Closing File Viewer...')    
+        self.manager.current = 'menu'  
 
 class MyScreenManager(ScreenManager):
     def __init__(self, **kwargs):
@@ -179,9 +180,9 @@ class MyScreenManager(ScreenManager):
 class MyApp(App):
 
     def build(self):
-        # Set title
-        self.title = 'Disease Detector'
+        self.title = 'Disease Detector' # Set title
         return MyScreenManager()
 
 if __name__ == '__main__':
-    MyApp().run()
+    app = MyApp()
+    app.run()
