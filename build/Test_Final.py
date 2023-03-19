@@ -179,6 +179,8 @@ class MyScreenManager(ScreenManager):
 class MyApp(App):
 
     def build(self):
+        # Set title
+        self.title = 'Disease Detector'
         return MyScreenManager()
 
 if __name__ == '__main__':
