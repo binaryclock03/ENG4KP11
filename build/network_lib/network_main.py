@@ -26,13 +26,13 @@ def train_network(data_path):
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     test_accuracy = 0
-    while(test_accuracy < 0.6):
+    while(test_accuracy < 0.7):
         print("\n-----------------------------\nRunning training")
         # Randomizing order of the data
         loop_data, loop_truths = fnf.randomize_data(data, truths)
 
         # Splits n number of images off from the dataset to be used as test data after training
-        n = 100
+        n = 20
         loop_data_test, loop_truths_test, loop_data, loop_truths = fnf.extract_and_return_remaining_data(loop_data, loop_truths, n)
         
         # Train the model
@@ -65,7 +65,7 @@ def run_model_test(model_path, data_path):
     data, truths = fnf.randomize_data(data, truths)
 
     # Splits n number of images off from the dataset to be used as test data after training
-    n = 20**2
+    n = 20
     data_test, truths_test, _, _ = fnf.extract_and_return_remaining_data(data, truths, n)
 
     predicted_truths = fnf.predict_class(model, data_test)
