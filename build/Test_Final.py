@@ -82,17 +82,16 @@ class FileViewer(Screen):
         super().__init__(**kwargs)
         layout = BoxLayout(orientation='vertical')
 
+        # create title for page
+        self.title = Label(text="File Browser", size_hint=(0.6, 0.3), pos_hint={'center_x': 0.5, 'center_y': 0.5}, font_size=40)
+        layout.add_widget(self.title)
+
         # create file chooser widget
-        self.file_chooser = FileChooserListView(path="C:/Users/Kevin H/Downloads/ENG4k Python GUI/data/val")#change to relative android path for apk C:/Users/Aditya Arora/Python/venv/ENG4KP11/build
+        self.file_chooser = FileChooserListView(path="")#change to relative android path for apk C:/Users/Aditya Arora/Python/venv/ENG4KP11/build
+        self.file_chooser.dirselect = True
         self.file_chooser.bind(selection=self.on_file_selection)
-
-        # create button widget to generate fake image
-        self.generate_button = Button(text='Generate Image', on_press=self.generate_image)
-
-        # add widgets to main screen layout
         layout.add_widget(self.file_chooser)
-        layout.add_widget(self.generate_button)
-
+        
         # create image widget to display generated image
         self.image_widget = Image()
         layout.add_widget(self.image_widget)
@@ -100,6 +99,12 @@ class FileViewer(Screen):
         # create label widget
         self.label_widget = Label()
         layout.add_widget(self.label_widget)
+
+        # create button widget to generate fake image
+        self.generate_button = Button(text='Generate Image', on_press=self.generate_image, size_hint=(0.6, 0.3), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        layout.add_widget(self.generate_button)
+
+        # add it all to the layout
         self.add_widget(layout)
 
     def on_file_selection(self, file_chooser, selection):
@@ -110,7 +115,7 @@ class FileViewer(Screen):
         if self.image_path:
             if self.image_path.endswith('.tif'):
                 image = fnf.load_single_tiff(self.image_path)
-                model = fnf.load_model("C:/Users/Kevin H/Downloads/ENG4k Python GUI/saved_models/trained_model_2023-02-08_22-03-42.h5")#change to relative android path for apk
+                model = fnf.load_model("build\\network_lib\\saved_models\\trained_model_2023-02-11_13-12-27.h5")#change to relative android path for apk
                 print(fnf.predict_class(model, image)[0])
                 self.label_widget.text = str(fnf.predict_class(model, image)[0])
             elif self.image_path.endswith('.png'):
@@ -142,7 +147,7 @@ class About(Screen):
         back_button.bind(on_press=self.back_about_viewer)
         layout.add_widget(back_button)
         
-        show_popup(self, layout)
+        #show_popup(self, layout)
         
         # Set the file viewer screen to use the box layout
         self.add_widget(layout)

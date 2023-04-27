@@ -173,3 +173,8 @@ def create_overlay_image(model_path, data_folder_path, background_image_path, ou
                                         color_rgb, 0.2)
 
     save_as_png(image, output_file_path)
+
+create_overlay_image("build\\network_lib\\saved_models\\trained_model_2023-04-26_01-32-42.h5", 
+                             "C:\\Users\\binar\\Downloads\\set1_edited_12x12\\set1_edited", 
+                             "image.png",
+                             "test.png")
