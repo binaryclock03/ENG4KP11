@@ -4,8 +4,8 @@ import imageio
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.patches import Rectangle
-from build.network_lib.functions.network_functions import load_trained_model, predict_class
-from build.network_lib.functions.math_functions import convert_truths_to_integer
+from network_lib.functions.network_functions import load_trained_model, predict_class
+from network_lib.functions.math_functions import convert_truths_to_integer
 
 
 def read_tiff_collection(dir_path):
