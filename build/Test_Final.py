@@ -17,12 +17,13 @@ import network_lib.functions.network_functions as fnf
 from kivy.uix.popup import Popup
 
 from pathlib import Path
-#import tiff_reader_test
+import tiff_reader_test
 
 import os
 import glob
 
 
+working_path = os.getcwd()
 
 
 class MainMenu(Screen):
@@ -40,30 +41,30 @@ class MainMenu(Screen):
         layout = BoxLayout(orientation='vertical', spacing=20, padding=50)
         
         # Add the logo to the layout
-        logo = Image(source='logo.png',size_hint=(0.35, 0.35), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        logo = Image(source= working_path + "\\assets\\Logo.png",size_hint=(0.35, 0.35), pos_hint={'center_x': 0.5, 'center_y': 0.5})
         layout.add_widget(logo)
         
         # Add buttons for each option
         file_viewer_button = Button(text='Open File Viewer', font_size=18, size_hint=(0.4, 0.15), pos_hint={'center_x': 0.5, 'center_y': 0.5})
         file_viewer_button.bind(on_press=self.open_file_viewer)
-        file_viewer_button.background_normal = 'button_1.png'
-        file_viewer_button.background_down = 'button_1_down.png'
+        file_viewer_button.background_normal = working_path + "\\assets\\button_1.png" #'button_1.png'
+        file_viewer_button.background_down = working_path + "\\assets\\button_1_down.png" #'button_1_down.png'
         file_viewer_button.background_color = (0.996, 0.98, 0.863)
         file_viewer_button.color = (0, 0, 0)
         layout.add_widget(file_viewer_button)
         
         app_settings_button = Button(text='App Settings', font_size=18, size_hint=(0.4, 0.15), pos_hint={'center_x': 0.5, 'center_y': 0.5})
         app_settings_button.bind(on_press=self.open_app_settings)
-        app_settings_button.background_normal = 'button_1.png'
-        app_settings_button.background_down = 'button_1_down.png'
+        app_settings_button.background_normal = working_path + "\\assets\\button_1.png"
+        app_settings_button.background_down = working_path + "\\assets\\button_1_down.png"
         app_settings_button.background_color = (0.996, 0.98, 0.863)
         app_settings_button.color = (0, 0, 0)
         layout.add_widget(app_settings_button)
         
         about_button = Button(text='About the App', font_size=18, size_hint=(0.4, 0.15), pos_hint={'center_x': 0.5, 'center_y': 0.5})
         about_button.bind(on_press=self.open_about)
-        about_button.background_normal = 'button_1.png'
-        about_button.background_down = 'button_1_down.png'
+        about_button.background_normal = working_path + "\\assets\\button_1.png"
+        about_button.background_down = working_path + "\\assets\\button_1_down.png"
         about_button.background_color = (0.996, 0.98, 0.863)
         about_button.color = (0, 0, 0)
         layout.add_widget(about_button)
@@ -132,27 +133,35 @@ class FileViewer(Screen):
             if (Path(self.image_path).is_dir()):
                 
                 # get a list of all files in the directory with the given extension
-                all_files = glob.glob(os.path.join(os.getcwd() + "\\assets\\saved_models", '*.h5'))
-                #print(os.path.join(os.getcwd() + "\\assets\\saved_models"))
-                latest_file = max(all_files, key=os.path.getmtime)
-                print(latest_file)
+                #all_files = glob.glob(os.path.join(os.getcwd() + "\\network_lib\\saved_models", '*.h5'))
+                # get the latest file path
+                #latest_file = max(all_files, key=os.path.getmtime)
                 
                 
                 #cwd = os.getcwd()
                 #print("THIS IS MY PATH: ")
                 #print(r'' + cwd + "\\network_lib\\saved_models\\trained_model_2023-02-11_13-12-27.h5")   #works fine
                 
-                #tiff_reader_test.create_overlay_image("","","","")
+                tiff_reader_test.create_overlay_image("","","","")
             elif (Path(self.image_path).is_file()):
                 if self.image_path.endswith('.tif'):
+                    
+                    # get a list of all files in the directory with the given extension
+                    all_files = glob.glob(os.path.join(os.getcwd() + "\\network_lib\\saved_models", '*.h5'))
+                    # get the latest file path
+                    latest_model = max(all_files, key=os.path.getmtime)
+                    #print(latest_model)
+                    
                     image = fnf.load_single_tiff(self.image_path)
-                    model = fnf.load_model("build\\network_lib\\saved_models\\trained_model_2023-02-11_13-12-27.h5")#change to relative android path for apk
+                    model = fnf.load_model(latest_model)#change to relative android path for apk and take latest model
+                    #model = fnf.load_model("build\\network_lib\\saved_models\\trained_model_2023-02-11_13-12-27.h5")
+
                     print(fnf.predict_class(model, image)[0])
                     self.label_widget.text = str(fnf.predict_class(model, image)[0])
                 elif self.image_path.endswith('.png'):
                     generated_image = Image(source=f'{self.image_path}')
                     self.image_widget.texture = generated_image.texture
-                    self.label_widget.text = 'This is not the proper input for the Neural Network'
+                    self.label_widget.text = ''
         else:
             self.label_widget.text = 'No file/folder selected'    
     
