@@ -4,6 +4,7 @@ import numpy as np
 import functions.math_functions as lmf
 from matplotlib.colors import ListedColormap
 
+
 ## User interaction Functions
 def ask_to_save_model(model):
     save = input("Do you want to save the model? [y/n]")

@@ -11,6 +11,7 @@ from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.uix.filechooser import FileChooserListView
 from kivy.properties import StringProperty
 from kivy.graphics import Rectangle
+from kivy.core.window import Window
 
 import network_lib.functions.model_definition as modeldef
 import network_lib.functions.network_functions as fnf
@@ -22,10 +23,6 @@ import tiff_reader_test
 import os
 import glob
 
-
-working_path = os.getcwd()
-
-
 class MainMenu(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -33,6 +30,8 @@ class MainMenu(Screen):
         with self.canvas:
             Color(0.212, 0.208, 0.216)
             self.rect = Rectangle(size=self.size, pos=self.pos)
+            y = 1000
+            Window.size = (y*(13/20), y)
         
         # Bind the function to update the background color when the size or position changes
         self.bind(size=self._update_rect, pos=self._update_rect)
@@ -41,30 +40,32 @@ class MainMenu(Screen):
         layout = BoxLayout(orientation='vertical', spacing=20, padding=50)
         
         # Add the logo to the layout
-        logo = Image(source= working_path + "\\assets\\Logo.png",size_hint=(0.35, 0.35), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        logo = Image(source= "build\\assets\\Logo.png",size_hint=(0.5, 0.5), pos_hint={'center_x': 0.5, 'center_y': 0.5})
         layout.add_widget(logo)
+
+        button_width = 0.6
         
         # Add buttons for each option
-        file_viewer_button = Button(text='Open File Viewer', font_size=18, size_hint=(0.4, 0.15), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        file_viewer_button = Button(text='Open File Viewer', font_size=18, size_hint=(button_width, 0.15), pos_hint={'center_x': 0.5, 'center_y': 0.5})
         file_viewer_button.bind(on_press=self.open_file_viewer)
-        file_viewer_button.background_normal = working_path + "\\assets\\button_1.png" #'button_1.png'
-        file_viewer_button.background_down = working_path + "\\assets\\button_1_down.png" #'button_1_down.png'
+        file_viewer_button.background_normal = "build\\assets\\button_1.png" #'button_1.png'
+        file_viewer_button.background_down = "build\\assets\\button_1_down.png" #'button_1_down.png'
         file_viewer_button.background_color = (0.996, 0.98, 0.863)
         file_viewer_button.color = (0, 0, 0)
         layout.add_widget(file_viewer_button)
         
-        app_settings_button = Button(text='App Settings', font_size=18, size_hint=(0.4, 0.15), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        app_settings_button = Button(text='App Settings', font_size=18, size_hint=(button_width, 0.15), pos_hint={'center_x': 0.5, 'center_y': 0.5})
         app_settings_button.bind(on_press=self.open_app_settings)
-        app_settings_button.background_normal = working_path + "\\assets\\button_1.png"
-        app_settings_button.background_down = working_path + "\\assets\\button_1_down.png"
+        app_settings_button.background_normal = "build\\assets\\button_1.png"
+        app_settings_button.background_down = "build\\assets\\button_1_down.png"
         app_settings_button.background_color = (0.996, 0.98, 0.863)
         app_settings_button.color = (0, 0, 0)
         layout.add_widget(app_settings_button)
         
-        about_button = Button(text='About the App', font_size=18, size_hint=(0.4, 0.15), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        about_button = Button(text='About the App', font_size=18, size_hint=(button_width, 0.15), pos_hint={'center_x': 0.5, 'center_y': 0.5})
         about_button.bind(on_press=self.open_about)
-        about_button.background_normal = working_path + "\\assets\\button_1.png"
-        about_button.background_down = working_path + "\\assets\\button_1_down.png"
+        about_button.background_normal = "build\\assets\\button_1.png"
+        about_button.background_down = "build\\assets\\button_1_down.png"
         about_button.background_color = (0.996, 0.98, 0.863)
         about_button.color = (0, 0, 0)
         layout.add_widget(about_button)
@@ -89,29 +90,39 @@ class MainMenu(Screen):
 class FileViewer(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        layout = BoxLayout(orientation='vertical')
+
+        layout = BoxLayout(orientation='vertical', )
 
         # create title for page
-        self.title = Label(text="File Browser", size_hint=(0.6, 0.3), pos_hint={'center_x': 0.5, 'center_y': 0.5}, font_size=40)
+        self.title = Label(text="File Browser", size_hint=(0.6, 0.1), pos_hint={'center_x': 0.5, 'center_y': 0.5}, font_size=40)
         layout.add_widget(self.title)
 
         # create file chooser widget
-        self.file_chooser = FileChooserListView(path="")#change to relative android path for apk C:/Users/Aditya Arora/Python/venv/ENG4KP11/build
+        self.file_chooser = FileChooserListView(path="", size_hint=(0.8, 0.2), pos_hint={'center_x': 0.5, 'center_y': 0.5})#change to relative android path for apk C:/Users/Aditya Arora/Python/venv/ENG4KP11/build
         self.file_chooser.dirselect = True
         self.file_chooser.bind(selection=self.on_file_selection)
         layout.add_widget(self.file_chooser)
         
         # create image widget to display generated image
-        self.image_widget = Image()
+        self.image_widget = Image(size_hint=(1, 0.6), pos_hint={'center_x': 0.5, 'center_y': 0.5})
         layout.add_widget(self.image_widget)
         
         # create label widget
         self.label_widget = Label()
-        layout.add_widget(self.label_widget)
+        #layout.add_widget(self.label_widget)
+
+        #create button panel for putting the buttons side by side
+        button_panel = BoxLayout(orientation='horizontal', size_hint=(0.8, 0.1), pos_hint={'center_x': 0.5, 'center_y': 0.5})
 
         # create button widget to generate fake image
-        self.generate_button = Button(text='Generate Image', on_press=self.generate_image, size_hint=(0.6, 0.3), pos_hint={'center_x': 0.5, 'center_y': 0.5})
-        layout.add_widget(self.generate_button)
+        self.generate_button = Button(text='Process Selected Data', on_press=self.generate_image, size_hint=(0.6, 1), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        button_panel.add_widget(self.generate_button)
+
+        back_button = Button(text='Back', size_hint=(0.6, 1), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        back_button.bind(on_press=self.back_generator)
+        button_panel.add_widget(back_button)
+
+        layout.add_widget(button_panel)
 
         # add it all to the layout
         self.add_widget(layout)
@@ -119,16 +130,15 @@ class FileViewer(Screen):
     def on_file_selection(self, file_chooser, selection):
         if selection:
             self.image_path = selection[0]
+    
+    def back_generator(self, instance):
+        # This method will be called when the "Back" button is pressed
+        # You can replace this with your own code to close the file viewer screen
+        self.manager.current = 'menu'
 
     def generate_image(self, instance):
-        '''
-        model_path (str): path towards the model to generate outputs
-        data_folder_path (str): path towards the data folder in which the function will itterate over
-        background_image_path (str): path towards the background image in which to overlay onto
-        output_file_path (str): path to and name of the image to be generated
+        # Set the background color to white
 
-        '''
-        
         if self.image_path:
             if (Path(self.image_path).is_dir()):
                 
@@ -136,25 +146,12 @@ class FileViewer(Screen):
                 tif_files = glob.glob(os.path.join(self.image_path, '*.tif'))
                 
                 if tif_files:
-                    # get a list of all files in the directory with the given extension
-                    all_files = glob.glob(os.path.join(working_path + "\\network_lib\\saved_models", '*.h5'))
                     # get the latest file path
-                    latest_model = max(all_files, key=os.path.getmtime)
+                    latest_model = "build\\saved_models\\trained_model_2023-02-11_13-12-27.h5"
                     
                     data_path = self.image_path
-                    background_path = working_path + "\\assets\\image.png"
-                    output_path = working_path + "\\assets\\test.png"
-                    
-                    '''
-                    create_overlay_image("build\\network_lib\\saved_models\\trained_model_2023-04-26_01-32-42.h5", 
-                                                 "C:\\Users\\binar\\Downloads\\set1_edited_12x12\\set1_edited", 
-                                                 "image.png",
-                                                 "test.png")
-                    '''
-                    
-                    #cwd = os.getcwd()
-                    #print("THIS IS MY PATH: ")
-                    #print(r'' + cwd + "\\network_lib\\saved_models\\trained_model_2023-02-11_13-12-27.h5")   #works fine
+                    background_path = "build\\assets\\image.png"
+                    output_path = "build\\assets\\test.png"
                     
                     tiff_reader_test.create_overlay_image(latest_model, data_path, background_path, output_path)
                     
@@ -166,16 +163,10 @@ class FileViewer(Screen):
                     self.label_widget.text = 'NO DATA (.TIF) FOUND INSIDE THE CURRENT SELECTED FOLDER'
             elif (Path(self.image_path).is_file()):
                 if self.image_path.endswith('.tif'):
-                    
-                    # get a list of all files in the directory with the given extension
-                    all_files = glob.glob(os.path.join(os.getcwd() + "\\network_lib\\saved_models", '*.h5'))
-                    # get the latest file path
-                    latest_model = max(all_files, key=os.path.getmtime)
-                    #print(latest_model)
+                    latest_model = "build\\saved_models\\trained_model_2023-02-11_13-12-27.h5"
                     
                     image = fnf.load_single_tiff(self.image_path)
-                    model = fnf.load_model(latest_model)#change to relative android path for apk and take latest model
-                    #model = fnf.load_model("build\\network_lib\\saved_models\\trained_model_2023-02-11_13-12-27.h5")
+                    model = fnf.load_model(latest_model)
 
                     print(fnf.predict_class(model, image)[0])
                     self.image_widget.texture = None
@@ -201,17 +192,22 @@ class About(Screen):
         layout = BoxLayout(orientation='vertical')
         
         # Add a label to show the name of the file being viewed
-        filename_label = Label(text='Filename: ')
+        filename_label = Label(text='This app was developed by a group of 6 engineering undergrads for their capstone project. Our project is focused on a disease called Yellow Rust, which can cause up to 50% yield losses in winter wheat if uncontrolled at early stages. Current solutions available to farmers are not able to detect Yellow Rust as its early symptoms are not visible to the human eye, leading to uncontrollable epidemics. Our project aimed to develop a cost-effective and user-friendly screening tool which uses AI to predict specific regions of a field that are infected using hyperspectral imagery. The application will allow users to access a file of collected images and identify specific locations that require further investigation and/or intervention.',
+                               size_hint=(0.9, 0.8), pos_hint={'center_x': 0.5, 'center_y': 0.5}, text_size = (1000*(12/20),None))
         layout.add_widget(filename_label)
         
+        button_panel = BoxLayout(orientation='horizontal', size_hint=(0.8, 0.2), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+
         # Add a button to close the file viewer screen
-        back_button = Button(text='Back')
+        back_button = Button(text='Back', size_hint=(0.4, 1), pos_hint={'center_x': 0.5, 'center_y': 0.5})
         back_button.bind(on_press=self.back_about_viewer)
-        layout.add_widget(back_button)
+        button_panel.add_widget(back_button)
         
-        up_button = Button(text='Upgrade!')
+        up_button = Button(text='Upgrade!', size_hint=(0.4, 1), pos_hint={'center_x': 0.5, 'center_y': 0.5})
         up_button.bind(on_press=self.upgrade_method)
-        layout.add_widget(up_button)
+        button_panel.add_widget(up_button)
+
+        layout.add_widget(button_panel)
         
         #show_popup(self, layout)
         

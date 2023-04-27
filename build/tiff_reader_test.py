@@ -4,8 +4,8 @@ import imageio
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.patches import Rectangle
-from build.network_lib.functions.network_functions import load_trained_model, predict_class
-from build.network_lib.functions.math_functions import convert_truths_to_integer
+from network_lib.functions.network_functions import load_trained_model, predict_class
+from network_lib.functions.math_functions import convert_truths_to_integer
 
 
 def read_tiff_collection(dir_path):
@@ -173,8 +173,3 @@ def create_overlay_image(model_path, data_folder_path, background_image_path, ou
                                         color_rgb, 0.2)
 
     save_as_png(image, output_file_path)
-
-create_overlay_image("build\\network_lib\\saved_models\\trained_model_2023-04-26_01-32-42.h5", 
-                             "C:\\Users\\binar\\Downloads\\set1_edited_12x12\\set1_edited", 
-                             "image.png",
-                             "test.png")
