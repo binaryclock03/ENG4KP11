@@ -132,17 +132,38 @@ class FileViewer(Screen):
         if self.image_path:
             if (Path(self.image_path).is_dir()):
                 
-                # get a list of all files in the directory with the given extension
-                #all_files = glob.glob(os.path.join(os.getcwd() + "\\network_lib\\saved_models", '*.h5'))
-                # get the latest file path
-                #latest_file = max(all_files, key=os.path.getmtime)
+                # get a list of all TIF files in the current selected directory
+                tif_files = glob.glob(os.path.join(self.image_path, '*.tif'))
                 
-                
-                #cwd = os.getcwd()
-                #print("THIS IS MY PATH: ")
-                #print(r'' + cwd + "\\network_lib\\saved_models\\trained_model_2023-02-11_13-12-27.h5")   #works fine
-                
-                tiff_reader_test.create_overlay_image("","","","")
+                if tif_files:
+                    # get a list of all files in the directory with the given extension
+                    all_files = glob.glob(os.path.join(working_path + "\\network_lib\\saved_models", '*.h5'))
+                    # get the latest file path
+                    latest_model = max(all_files, key=os.path.getmtime)
+                    
+                    data_path = self.image_path
+                    background_path = working_path + "\\assets\\image.png"
+                    output_path = working_path + "\\assets\\test.png"
+                    
+                    '''
+                    create_overlay_image("build\\network_lib\\saved_models\\trained_model_2023-04-26_01-32-42.h5", 
+                                                 "C:\\Users\\binar\\Downloads\\set1_edited_12x12\\set1_edited", 
+                                                 "image.png",
+                                                 "test.png")
+                    '''
+                    
+                    #cwd = os.getcwd()
+                    #print("THIS IS MY PATH: ")
+                    #print(r'' + cwd + "\\network_lib\\saved_models\\trained_model_2023-02-11_13-12-27.h5")   #works fine
+                    
+                    tiff_reader_test.create_overlay_image(latest_model, data_path, background_path, output_path)
+                    
+                    generated_image = Image(source=output_path)
+                    self.image_widget.texture = generated_image.texture
+                    self.label_widget.text = ''
+                else:
+                    self.image_widget.texture = None
+                    self.label_widget.text = 'NO DATA (.TIF) FOUND INSIDE THE CURRENT SELECTED FOLDER'
             elif (Path(self.image_path).is_file()):
                 if self.image_path.endswith('.tif'):
                     
@@ -157,6 +178,7 @@ class FileViewer(Screen):
                     #model = fnf.load_model("build\\network_lib\\saved_models\\trained_model_2023-02-11_13-12-27.h5")
 
                     print(fnf.predict_class(model, image)[0])
+                    self.image_widget.texture = None
                     self.label_widget.text = str(fnf.predict_class(model, image)[0])
                 elif self.image_path.endswith('.png'):
                     generated_image = Image(source=f'{self.image_path}')
