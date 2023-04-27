@@ -16,6 +16,14 @@ import network_lib.functions.model_definition as modeldef
 import network_lib.functions.network_functions as fnf
 from kivy.uix.popup import Popup
 
+from pathlib import Path
+#import tiff_reader_test
+
+import os
+import glob
+
+
+
 
 class MainMenu(Screen):
     def __init__(self, **kwargs):
@@ -112,18 +120,41 @@ class FileViewer(Screen):
             self.image_path = selection[0]
 
     def generate_image(self, instance):
+        '''
+        model_path (str): path towards the model to generate outputs
+        data_folder_path (str): path towards the data folder in which the function will itterate over
+        background_image_path (str): path towards the background image in which to overlay onto
+        output_file_path (str): path to and name of the image to be generated
+
+        '''
+        
         if self.image_path:
-            if self.image_path.endswith('.tif'):
-                image = fnf.load_single_tiff(self.image_path)
-                model = fnf.load_model("build\\network_lib\\saved_models\\trained_model_2023-02-11_13-12-27.h5")#change to relative android path for apk
-                print(fnf.predict_class(model, image)[0])
-                self.label_widget.text = str(fnf.predict_class(model, image)[0])
-            elif self.image_path.endswith('.png'):
-                generated_image = Image(source=f'{self.image_path}')
-                self.image_widget.texture = generated_image.texture
-                self.label_widget.text = 'This is not the proper input for the Neural Network'
+            if (Path(self.image_path).is_dir()):
+                
+                # get a list of all files in the directory with the given extension
+                all_files = glob.glob(os.path.join(os.getcwd() + "\\assets\\saved_models", '*.h5'))
+                #print(os.path.join(os.getcwd() + "\\assets\\saved_models"))
+                latest_file = max(all_files, key=os.path.getmtime)
+                print(latest_file)
+                
+                
+                #cwd = os.getcwd()
+                #print("THIS IS MY PATH: ")
+                #print(r'' + cwd + "\\network_lib\\saved_models\\trained_model_2023-02-11_13-12-27.h5")   #works fine
+                
+                #tiff_reader_test.create_overlay_image("","","","")
+            elif (Path(self.image_path).is_file()):
+                if self.image_path.endswith('.tif'):
+                    image = fnf.load_single_tiff(self.image_path)
+                    model = fnf.load_model("build\\network_lib\\saved_models\\trained_model_2023-02-11_13-12-27.h5")#change to relative android path for apk
+                    print(fnf.predict_class(model, image)[0])
+                    self.label_widget.text = str(fnf.predict_class(model, image)[0])
+                elif self.image_path.endswith('.png'):
+                    generated_image = Image(source=f'{self.image_path}')
+                    self.image_widget.texture = generated_image.texture
+                    self.label_widget.text = 'This is not the proper input for the Neural Network'
         else:
-            self.label_widget.text = 'No file selected'    
+            self.label_widget.text = 'No file/folder selected'    
     
     def close_file_viewer(self, instance):
         # This method will be called when the "Close" button is pressed
@@ -147,6 +178,10 @@ class About(Screen):
         back_button.bind(on_press=self.back_about_viewer)
         layout.add_widget(back_button)
         
+        up_button = Button(text='Upgrade!')
+        up_button.bind(on_press=self.upgrade_method)
+        layout.add_widget(up_button)
+        
         #show_popup(self, layout)
         
         # Set the file viewer screen to use the box layout
@@ -155,6 +190,20 @@ class About(Screen):
         # This method will be called when the "Back" button is pressed
         # You can replace this with your own code to close the file viewer screen
         self.manager.current = 'menu'
+        
+    def upgrade_method(self, instance):
+        # This method will be called when the "up" button is pressed
+        popup = Popup(title='Upgrade to Premium', content=BoxLayout(orientation='vertical'), size_hint=(None, None), size=(400, 200),
+                          pos_hint={'center_x': 0.5, 'top': 1})
+        popup.content.add_widget(Label(text='Upgrade to Premium to unlock more features!'))
+        upgrade_button = Button(text='Upgrade', size_hint_y=None, height=40)
+        #upgrade_button.bind()
+        popup.content.add_widget(upgrade_button)
+        
+        dismiss_button = Button(text='Dismiss', size_hint_y=None, height=40)
+        dismiss_button.bind(on_press=popup.dismiss)
+        popup.content.add_widget(dismiss_button)
+        popup.open()
 
     
 def show_popup(self, content):
